@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  </head>
+  <body>
+    <h1>My New Page</h1>
+    
+   <%require 'pg'%>
+    <%connection = PG::connect(dbname: "goya")%>
+    <%connection.internal_encoding = "UTF-8"%>
+    
+    <%result = connection.exec("select length, date from crops;")%>
+    <%data = []%>
+    <%result.each do |record|%>
+      <%data << "Length：#{record["length"]}　Date：#{record["date"]}"%>
+    <%end%>
+
+<!--Goya Information -->
+    <form action="Newgoya.cgi" method="POST">
+       Cliquez sur le bouton ci-dessous pour accéder à la page d'information 
+       sur la longueur du melon amer et sur la date de la  vente.<br><br>
+       <!-- valueには、送りたいデータを代入する -->
+       <!-- name="goya"を、情報の目印とする -->
+      <input type="text" name="Newgoya" value="<%=data.join(' ')%>">
+      <input type="submit" name="Valider" >
+    </form>
+            <!-- Fake Goya Information-->
+    <h2>Fake Information</h2>
+    <%result1 = connection.exec("Select quality from crops WHERE NOT quality = 't';")%>
+    <%data1 = []%>
+    <%result1.each do |record|%>
+    <%data1 << "Quality：#{record["quality"]}"%>
+    <%end%>
+
+    <form action="Falsegoya.cgi" method="POST">
+       Cliquez sur le bouton ci-dessous pour accéder à la page d'information.
+       <br><br>
+       <!-- valueには、送りたいデータを代入する -->
+       <!-- name="goya"を、情報の目印とする -->
+      <input type="text" name="Falsegoya" value="<%=data1.join(' ')%>">
+      <input type="submit" name="Valider" >
+    </form>
+
+  </body>
+</html>
